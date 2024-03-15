@@ -1,0 +1,20 @@
+CREATE TABLE actor (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  sex TEXT NOT NULL,
+  birthday DATE NOT NULL
+);
+
+CREATE TABLE film (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    release_date DATE NOT NULL,
+    rating int NOT NULL
+);
+
+CREATE TABLE actor_film (
+    id SERIAL PRIMARY KEY,
+    actor_id BIGINT NOT NULL REFERENCES actor(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    film_id BIGINT NOT NULL REFERENCES film(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
