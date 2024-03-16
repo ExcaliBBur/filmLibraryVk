@@ -21,7 +21,7 @@ func (film *FilmRequest) UnmarshalJSON(p []byte) error {
 		Description *string `json:"description"`
 		ReleaseDate *string `json:"releaseDate"`
 		Rating      *int    `json:"rating"`
-		ActorsId    *[]int     `json:"actorsId"`
+		ActorsId    *[]int  `json:"actorsId"`
 	}
 
 	err := json.Unmarshal(p, &aux)

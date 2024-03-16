@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,8 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/actor/"
 	switch r.Method {
 	case "GET":
-		if r.RequestURI != "/api/actor/" {
+		isGetActor, _ := regexp.MatchString("/api/actor/.", r.RequestURI)
+		if !isGetActor {
 			h.getActors(w)
 			return
 		}

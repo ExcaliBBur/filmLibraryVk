@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +17,8 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/film/"
 	switch r.Method {
 	case "GET":
-		if r.RequestURI != "/api/film/" {
+		isGetFilm, _ := regexp.MatchString("/api/film/.", r.RequestURI)
+		if !isGetFilm {
 			h.getFilms(w, r.URL.Query().Get("sortBy"))
 			return
 		}
