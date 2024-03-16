@@ -20,6 +20,8 @@ func (h *Handler) InitRoutes() http.Handler {
 
 	mux.Handle("/api/film", http.HandlerFunc(h.film))
 	mux.Handle("/api/film/", http.HandlerFunc(h.film))
+	mux.Handle("/api/film/search", http.HandlerFunc(h.filmSearch))
+
 
 	return mux
 }

@@ -57,15 +57,18 @@ func (r *FilmRepo) GetFilm(id int) (film.FilmResponse, error) {
 	return fil, nil
 }
 
-func (r *FilmRepo) GetFilms() ([]film.FilmResponse, error) {
-	mapFilm := make(map[int]film.FilmResponse)
+func (r *FilmRepo) GetFilms(sortBy string) ([]film.FilmResponse, error) {
+	films := make([]film.FilmResponse, 0)
+	isFilmExistsMap := make(map[int]int)
 	mapActors := make(map[int][]int)
+
 	fil := film.FilmResponse{}
 	var releaseDate string
 	var actorId sql.NullInt64
 
 	query, err := r.db.Prepare("SELECT film.id, name, description, release_date, rating, actor_id FROM film " +
-		"LEFT JOIN actor_film ON film.id = actor_film.film_id ")
+		"LEFT JOIN actor_film ON film.id = actor_film.film_id " +
+		"ORDER BY " + sortBy)
 	if err != nil {
 		return nil, err
 	}
@@ -81,25 +84,25 @@ func (r *FilmRepo) GetFilms() ([]film.FilmResponse, error) {
 			return nil, err
 		}
 		fil.ReleaseDate = strings.Split(releaseDate, "T")[0]
-		_, ok := mapFilm[fil.Id]
-		if !ok {
-			mapFilm[fil.Id] = fil
-		}
 
-		_, ok = mapActors[fil.Id]
+		_, ok := mapActors[fil.Id]
 		if !ok {
 			mapActors[fil.Id] = make([]int, 0)
 		}
 		if actorId.Valid {
 			mapActors[fil.Id] = append(mapActors[fil.Id], int(actorId.Int64))
 		}
+		_, ok = isFilmExistsMap[fil.Id]
+		if !ok {
+			films = append(films, fil)
+			isFilmExistsMap[fil.Id] = fil.Id
+		}
 	}
-	var films []film.FilmResponse
-	for key, value := range mapFilm {
-		value.ActorsId = mapActors[key]
-		films = append(films, value)
+
+	for i := range films {
+		films[i].ActorsId = mapActors[films[i].Id]
 	}
-	log.Printf("Get films")
+	log.Printf("Get films with sort %s", sortBy)
 	return films, nil
 }
 
@@ -286,4 +289,98 @@ func (r *FilmRepo) updateFilmsId(request film.FilmRequest, id int) error {
 		row.Next()
 	}
 	return nil
+}
+
+func (r *FilmRepo) SearchFilmsByName(name string) ([]film.FilmResponse, error) {
+	films := make([]film.FilmResponse, 0)
+	isFilmExistsMap := make(map[int]int)
+	mapActors := make(map[int][]int)
+	fil := film.FilmResponse{}
+	var releaseDate string
+	var actorId sql.NullInt64
+	query, err := r.db.Prepare("SELECT film.id, name, description, release_date, rating, actor_id FROM film " +
+		"LEFT JOIN actor_film ON film.id = actor_film.film_id " +
+		"WHERE film.name LIKE '" + name + "%'")
+	if err != nil {
+		return nil, err
+	}
+	defer query.Close()
+	rows, err := query.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&fil.Id, &fil.Name, &fil.Description, &releaseDate, &fil.Rating, &actorId)
+		if err != nil {
+			return nil, err
+		}
+		fil.ReleaseDate = strings.Split(releaseDate, "T")[0]
+
+		_, ok := mapActors[fil.Id]
+		if !ok {
+			mapActors[fil.Id] = make([]int, 0)
+		}
+		if actorId.Valid {
+			mapActors[fil.Id] = append(mapActors[fil.Id], int(actorId.Int64))
+		}
+		_, ok = isFilmExistsMap[fil.Id]
+		if !ok {
+			films = append(films, fil)
+			isFilmExistsMap[fil.Id] = fil.Id
+		}
+	}
+	for i := range films {
+		films[i].ActorsId = mapActors[films[i].Id]
+	}
+	log.Printf("Search films by name")
+	return films, nil
+}
+
+func (r *FilmRepo) SearchFilmsByActor(name string) ([]film.FilmResponse, error) {
+	films := make([]film.FilmResponse, 0)
+	isFilmExistsMap := make(map[int]int)
+	mapActors := make(map[int][]int)
+
+	fil := film.FilmResponse{}
+	var releaseDate string
+	var actorId sql.NullInt64
+	query, err := r.db.Prepare("SELECT film.id, film.name, description, release_date, rating, actor_id FROM film " +
+		"JOIN actor_film ON film.id = actor_film.film_id " +
+		"JOIN actor ON actor_film.actor_id = actor.id " +
+		"WHERE actor.name LIKE '" + name + "%'")
+	if err != nil {
+		return nil, err
+	}
+	defer query.Close()
+	rows, err := query.Query()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&fil.Id, &fil.Name, &fil.Description, &releaseDate, &fil.Rating, &actorId)
+		if err != nil {
+			return nil, err
+		}
+		fil.ReleaseDate = strings.Split(releaseDate, "T")[0]
+
+		_, ok := mapActors[fil.Id]
+		if !ok {
+			mapActors[fil.Id] = make([]int, 0)
+		}
+		if actorId.Valid {
+			mapActors[fil.Id] = append(mapActors[fil.Id], int(actorId.Int64))
+		}
+		_, ok = isFilmExistsMap[fil.Id]
+		if !ok {
+			films = append(films, fil)
+			isFilmExistsMap[fil.Id] = fil.Id
+		}
+	}
+	for i := range films {
+		films[i].ActorsId = mapActors[films[i].Id]
+	}
+	log.Printf("Search film by actor")
+	return films, nil
 }

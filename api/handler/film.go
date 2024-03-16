@@ -16,16 +16,15 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/film/"
 	switch r.Method {
 	case "GET":
-		if r.RequestURI != "/api/film" {
-			id := getPathId(w, r, prefix)
-			if id == -1 {
-				return
-			}
-			h.getFilm(w, id)
+		if r.RequestURI != "/api/film/" {
+			h.getFilms(w, r.URL.Query().Get("sortBy"))
 			return
 		}
-
-		h.getFilms(w)
+		id := getPathId(w, r, prefix)
+		if id == -1 {
+			return
+		}
+		h.getFilm(w, id)
 	case "POST":
 		h.createFilm(w, r)
 	case "PUT":
@@ -52,6 +51,17 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s request on %s", r.Method, r.RequestURI)
+	switch r.Method {
+	case "GET":
+		h.searchFilms(w, r)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+
 func (h *Handler) getFilm(w http.ResponseWriter, id int) {
 	film, err := h.services.GetFilm(id)
 	if err != nil {
@@ -63,8 +73,9 @@ func (h *Handler) getFilm(w http.ResponseWriter, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
-func (h *Handler) getFilms(w http.ResponseWriter) {
-	films, err := h.services.GetFilms()
+func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) {
+
+	films, err := h.services.GetFilms(sortBy)
 	if err != nil {
 		handleError(w, err, http.StatusInternalServerError)
 		return
@@ -168,4 +179,21 @@ func (h *Handler) deleteFilm(w http.ResponseWriter, id int) {
 		handleError(w, err, http.StatusBadRequest)
 		return
 	}
+}
+
+func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) {
+	var films []film.FilmResponse
+	var err error
+	if r.URL.Query().Get("name") != "" {
+		films, err = h.services.SearchFilmsBy("name", r.URL.Query().Get("name"))
+	} else if r.URL.Query().Get("actor") != "" {
+		films, err = h.services.SearchFilmsBy("actor", r.URL.Query().Get("actor"))
+	}
+	if err != nil {
+		handleError(w, err, http.StatusInternalServerError)
+		return
+	}
+	reqBodyBytes := new(bytes.Buffer)
+	json.NewEncoder(reqBodyBytes).Encode(films)
+	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }

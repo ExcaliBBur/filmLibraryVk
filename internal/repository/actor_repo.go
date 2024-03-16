@@ -58,8 +58,10 @@ func (r *ActorRepo) GetActor(id int) (actor.ActorResponse, error) {
 }
 
 func (r *ActorRepo) GetActors() ([]actor.ActorResponse, error) {
-	mapActor := make(map[int]actor.ActorResponse)
+	actors := make([]actor.ActorResponse, 0)
+	isActorExistsMap := make(map[int]int)
 	mapFilms := make(map[int][]int)
+
 	act := actor.ActorResponse{}
 	var birthday string
 	var filmId sql.NullInt64
@@ -81,23 +83,22 @@ func (r *ActorRepo) GetActors() ([]actor.ActorResponse, error) {
 			return nil, err
 		}
 		act.Birthday = strings.Split(birthday, "T")[0]
-		_, ok := mapActor[act.Id]
-		if !ok {
-			mapActor[act.Id] = act
-		}
 
-		_, ok = mapFilms[act.Id]
+		_, ok := mapFilms[act.Id]
 		if !ok {
 			mapFilms[act.Id] = make([]int, 0)
 		}
 		if filmId.Valid {
 			mapFilms[act.Id] = append(mapFilms[act.Id], int(filmId.Int64))
 		}
+		_, ok = isActorExistsMap[act.Id]
+		if !ok {
+			actors = append(actors, act)
+			isActorExistsMap[act.Id] = act.Id
+		}
 	}
-	var actors []actor.ActorResponse
-	for key, value := range mapActor {
-		value.FilmsId = mapFilms[key]
-		actors = append(actors, value)
+	for i := range actors {
+		actors[i].FilmsId = mapFilms[actors[i].Id]
 	}
 	log.Printf("Get actors")
 

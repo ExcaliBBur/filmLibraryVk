@@ -14,16 +14,15 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/actor/"
 	switch r.Method {
 	case "GET":
-		if r.RequestURI != "/api/actor" {
-			id := getPathId(w, r, prefix)
-			if id == -1 {
-				return
-			}
-			h.getActor(w, id)
+		if r.RequestURI != "/api/actor/" {
+			h.getActors(w)
 			return
 		}
-
-		h.getActors(w)
+		id := getPathId(w, r, prefix)
+		if id == -1 {
+			return
+		}
+		h.getActor(w, id)
 	case "POST":
 		h.createActor(w, r)
 	case "PUT":

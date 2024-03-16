@@ -20,7 +20,7 @@ type Actor interface {
 
 type Film interface {
 	GetFilm(id int) (film.FilmResponse, error)
-	GetFilms() ([]film.FilmResponse, error)
+	GetFilms(sortBy string) ([]film.FilmResponse, error)
 
 	CreateFilm(request film.FilmRequest) (int, error)
 
@@ -28,6 +28,8 @@ type Film interface {
 	PatchFilm(id int, request film.FilmRequest) (film.FilmResponse, error)
 
 	DeleteFilm(id int) error
+
+	SearchFilmsBy(field, value string) ([]film.FilmResponse, error)
 }
 
 type Service struct {
