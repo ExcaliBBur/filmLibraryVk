@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
+	"filmLibraryVk/api/REST/presenter"
+	"filmLibraryVk/internal/model/entity"
 	"filmLibraryVk/internal/repository"
-	"filmLibraryVk/model/dto/film"
-	"filmLibraryVk/model/entity"
 	"fmt"
 	"reflect"
 	"strings"
@@ -15,15 +15,13 @@ type FilmService struct {
 }
 
 func NewFilmService(repo repository.Film) *FilmService {
-	return &FilmService{
-		repo: repo,
-	}
+	return &FilmService{repo: repo}
 }
 
-func (s *FilmService) GetFilm(id int) (film.FilmResponse, error) {
+func (s *FilmService) GetFilm(id int) (presenter.FilmResponse, error) {
 	return s.repo.GetFilm(id)
 }
-func (s *FilmService) GetFilms(sortBy string) ([]film.FilmResponse, error) {
+func (s *FilmService) GetFilms(sortBy string) ([]presenter.FilmResponse, error) {
 	sortQuery, err := validateAndReturnSortQuery(sortBy)
 	if err != nil {
 		return nil, err
@@ -31,15 +29,15 @@ func (s *FilmService) GetFilms(sortBy string) ([]film.FilmResponse, error) {
 	return s.repo.GetFilms(sortQuery)
 }
 
-func (s *FilmService) CreateFilm(request film.FilmRequest) (int, error) {
+func (s *FilmService) CreateFilm(request presenter.FilmRequest) (int, error) {
 	return s.repo.CreateFilm(request)
 }
 
-func (s *FilmService) PutFilm(id int, request film.FilmRequest) (film.FilmResponse, error) {
+func (s *FilmService) PutFilm(id int, request presenter.FilmRequest) (presenter.FilmResponse, error) {
 	return s.repo.PutFilm(id, request)
 }
 
-func (s *FilmService) PatchFilm(id int, request film.FilmRequest) (film.FilmResponse, error) {
+func (s *FilmService) PatchFilm(id int, request presenter.FilmRequest) (presenter.FilmResponse, error) {
 	return s.repo.PatchFilm(id, request)
 }
 
@@ -47,11 +45,11 @@ func (s *FilmService) DeleteFilm(id int) error {
 	return s.repo.DeleteFilm(id)
 }
 
-func (s *FilmService) SearchFilmsBy(field, value string) ([]film.FilmResponse, error) {
-	switch field{
+func (s *FilmService) SearchFilmsBy(field, value string) ([]presenter.FilmResponse, error) {
+	switch field {
 	case "name":
 		return s.repo.SearchFilmsByName(value)
-	case "actor" :
+	case "actor":
 		return s.repo.SearchFilmsByActor(value)
 	default:
 		return nil, errors.New("can not search by " + field)

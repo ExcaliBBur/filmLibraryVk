@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"filmLibraryVk/model/dto/actor"
+	"filmLibraryVk/api/REST/presenter"
 	"fmt"
 	"log"
 	"strconv"
@@ -18,8 +18,8 @@ func NewActorRepo(db *sql.DB) *ActorRepo {
 	return &ActorRepo{db: db}
 }
 
-func (r *ActorRepo) GetActor(id int) (actor.ActorResponse, error) {
-	act := actor.ActorResponse{}
+func (r *ActorRepo) GetActor(id int) (presenter.ActorResponse, error) {
+	act := presenter.ActorResponse{}
 	filmsId := make([]int, 0)
 	var birthday string
 	var filmId sql.NullInt64
@@ -29,20 +29,20 @@ func (r *ActorRepo) GetActor(id int) (actor.ActorResponse, error) {
 		"WHERE actor.id = $1")
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	defer query.Close()
 	rows, err := query.Query(id)
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	for rows.Next() {
 		err = rows.Scan(&act.Id, &act.Name, &act.Sex, &birthday, &filmId)
 		if err != nil {
-			return actor.ActorResponse{}, err
+			return presenter.ActorResponse{}, err
 		}
 		act.Birthday = strings.Split(birthday, "T")[0]
 		if filmId.Valid {
@@ -50,19 +50,19 @@ func (r *ActorRepo) GetActor(id int) (actor.ActorResponse, error) {
 		}
 	}
 	if act.Id != id {
-		return actor.ActorResponse{}, errors.New("entity not found")
+		return presenter.ActorResponse{}, errors.New("entity not found")
 	}
 	act.FilmsId = filmsId
 	log.Printf("Get actor with id %d", id)
 	return act, nil
 }
 
-func (r *ActorRepo) GetActors() ([]actor.ActorResponse, error) {
-	actors := make([]actor.ActorResponse, 0)
+func (r *ActorRepo) GetActors() ([]presenter.ActorResponse, error) {
+	actors := make([]presenter.ActorResponse, 0)
 	isActorExistsMap := make(map[int]int)
 	mapFilms := make(map[int][]int)
 
-	act := actor.ActorResponse{}
+	act := presenter.ActorResponse{}
 	var birthday string
 	var filmId sql.NullInt64
 
@@ -105,7 +105,7 @@ func (r *ActorRepo) GetActors() ([]actor.ActorResponse, error) {
 	return actors, nil
 }
 
-func (r *ActorRepo) CreateActor(request actor.ActorRequest) (int, error) {
+func (r *ActorRepo) CreateActor(request presenter.ActorRequest) (int, error) {
 	var id int
 	query, err := r.db.Prepare("INSERT INTO actor (name, sex, birthday) VALUES ($1, $2, $3) RETURNING id")
 	if err != nil {
@@ -143,37 +143,37 @@ func (r *ActorRepo) CreateActor(request actor.ActorRequest) (int, error) {
 	return id, nil
 }
 
-func (r *ActorRepo) PutActor(id int, request actor.ActorRequest) (actor.ActorResponse, error) {
+func (r *ActorRepo) PutActor(id int, request presenter.ActorRequest) (presenter.ActorResponse, error) {
 	var updatedId int
 	query, err := r.db.Prepare("UPDATE actor SET name = $1, sex = $2, birthday = $3 WHERE id = $4 RETURNING id")
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 	defer query.Close()
 	row, err := query.Query(*request.Name, *request.Sex, *request.Birthday, id)
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	for row.Next() {
 		if err := row.Scan(&updatedId); err != nil {
-			return actor.ActorResponse{}, err
+			return presenter.ActorResponse{}, err
 		}
 	}
 
 	if updatedId != id {
-		return actor.ActorResponse{}, errors.New("entity not found")
+		return presenter.ActorResponse{}, errors.New("entity not found")
 	}
 
 	err = r.updateFilmsId(request, id)
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	log.Printf("Put actor with id %d", id)
-	return actor.ActorResponse{
+	return presenter.ActorResponse{
 		Id:       id,
 		Name:     *request.Name,
 		Sex:      *request.Sex,
@@ -182,7 +182,7 @@ func (r *ActorRepo) PutActor(id int, request actor.ActorRequest) (actor.ActorRes
 	}, nil
 }
 
-func (r *ActorRepo) PatchActor(id int, request actor.ActorRequest) (actor.ActorResponse, error) {
+func (r *ActorRepo) PatchActor(id int, request presenter.ActorRequest) (presenter.ActorResponse, error) {
 	q := `UPDATE actor SET `
 	qParts := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
@@ -211,22 +211,22 @@ func (r *ActorRepo) PatchActor(id int, request actor.ActorRequest) (actor.ActorR
 	row, err := r.db.Query(q, args...)
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	for row.Next() {
 		if err := row.Scan(&updatedId); err != nil {
-			return actor.ActorResponse{}, err
+			return presenter.ActorResponse{}, err
 		}
 	}
 	if updatedId != id {
-		return actor.ActorResponse{}, errors.New("entity not found")
+		return presenter.ActorResponse{}, errors.New("entity not found")
 	}
 
 	err = r.updateFilmsId(request, id)
 
 	if err != nil {
-		return actor.ActorResponse{}, err
+		return presenter.ActorResponse{}, err
 	}
 
 	log.Printf("Patch actor with id %d", id)
@@ -249,7 +249,7 @@ func (r *ActorRepo) DeleteActor(id int) error {
 	return nil
 }
 
-func (r *ActorRepo) updateFilmsId(request actor.ActorRequest, id int) error {
+func (r *ActorRepo) updateFilmsId(request presenter.ActorRequest, id int) error {
 	if request.FilmsId == nil {
 		return nil
 	}

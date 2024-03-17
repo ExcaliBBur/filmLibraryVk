@@ -1,7 +1,7 @@
 package main
 
 import (
-	"filmLibraryVk/api/handler"
+	"filmLibraryVk/api/REST/handler"
 	"filmLibraryVk/internal/repository"
 	"filmLibraryVk/internal/service"
 	"filmLibraryVk/pkg"

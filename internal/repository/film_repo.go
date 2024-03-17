@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"filmLibraryVk/model/dto/film"
+	"filmLibraryVk/api/REST/presenter"
 	"fmt"
 	"log"
 	"strconv"
@@ -18,8 +18,8 @@ func NewFilmRepo(db *sql.DB) *FilmRepo {
 	return &FilmRepo{db: db}
 }
 
-func (r *FilmRepo) GetFilm(id int) (film.FilmResponse, error) {
-	fil := film.FilmResponse{}
+func (r *FilmRepo) GetFilm(id int) (presenter.FilmResponse, error) {
+	fil := presenter.FilmResponse{}
 	actorsId := make([]int, 0)
 	var releaseDate string
 	var actorId sql.NullInt64
@@ -29,20 +29,20 @@ func (r *FilmRepo) GetFilm(id int) (film.FilmResponse, error) {
 		"WHERE film.id = $1")
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	defer query.Close()
 	row, err := query.Query(id)
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	for row.Next() {
 		err = row.Scan(&fil.Id, &fil.Name, &fil.Description, &releaseDate, &fil.Rating, &actorId)
 		if err != nil {
-			return film.FilmResponse{}, err
+			return presenter.FilmResponse{}, err
 		}
 		fil.ReleaseDate = strings.Split(releaseDate, "T")[0]
 		if actorId.Valid {
@@ -50,19 +50,19 @@ func (r *FilmRepo) GetFilm(id int) (film.FilmResponse, error) {
 		}
 	}
 	if fil.Id != id {
-		return film.FilmResponse{}, errors.New("entity not found")
+		return presenter.FilmResponse{}, errors.New("entity not found")
 	}
 	fil.ActorsId = actorsId
 	log.Printf("Get film with id %d", id)
 	return fil, nil
 }
 
-func (r *FilmRepo) GetFilms(sortBy string) ([]film.FilmResponse, error) {
-	films := make([]film.FilmResponse, 0)
+func (r *FilmRepo) GetFilms(sortBy string) ([]presenter.FilmResponse, error) {
+	films := make([]presenter.FilmResponse, 0)
 	isFilmExistsMap := make(map[int]int)
 	mapActors := make(map[int][]int)
 
-	fil := film.FilmResponse{}
+	fil := presenter.FilmResponse{}
 	var releaseDate string
 	var actorId sql.NullInt64
 
@@ -106,7 +106,7 @@ func (r *FilmRepo) GetFilms(sortBy string) ([]film.FilmResponse, error) {
 	return films, nil
 }
 
-func (r *FilmRepo) CreateFilm(request film.FilmRequest) (int, error) {
+func (r *FilmRepo) CreateFilm(request presenter.FilmRequest) (int, error) {
 	var id int
 	query, err := r.db.Prepare("INSERT INTO film (name, description, release_date, rating) " +
 		"VALUES ($1, $2, $3, $4) RETURNING id")
@@ -145,47 +145,47 @@ func (r *FilmRepo) CreateFilm(request film.FilmRequest) (int, error) {
 	return id, nil
 }
 
-func (r *FilmRepo) PutFilm(id int, request film.FilmRequest) (film.FilmResponse, error) {
+func (r *FilmRepo) PutFilm(id int, request presenter.FilmRequest) (presenter.FilmResponse, error) {
 	var updatedId int
 	query, err := r.db.Prepare("UPDATE film SET name = $1, description = $2, release_date = $3, rating = $4" +
 		" WHERE id = $5 RETURNING id")
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 	defer query.Close()
 	row, err := query.Query(*request.Name, *request.Description, *request.ReleaseDate, *request.Rating, id)
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	for row.Next() {
 		if err := row.Scan(&updatedId); err != nil {
-			return film.FilmResponse{}, err
+			return presenter.FilmResponse{}, err
 		}
 	}
 	if updatedId != id {
-		return film.FilmResponse{}, errors.New("entity not found")
+		return presenter.FilmResponse{}, errors.New("entity not found")
 	}
 
 	err = r.updateFilmsId(request, id)
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	log.Printf("Put film with id %d", id)
-	return film.FilmResponse{
-		Id:       id,
-		Name:     *request.Name,
+	return presenter.FilmResponse{
+		Id:          id,
+		Name:        *request.Name,
 		Description: *request.Description,
 		ReleaseDate: strings.Split((*request.ReleaseDate).String(), " ")[0],
-		Rating: *request.Rating,
-		ActorsId: *request.ActorsId,
+		Rating:      *request.Rating,
+		ActorsId:    *request.ActorsId,
 	}, nil
 }
 
-func (r *FilmRepo) PatchFilm(id int, request film.FilmRequest) (film.FilmResponse, error) {
+func (r *FilmRepo) PatchFilm(id int, request presenter.FilmRequest) (presenter.FilmResponse, error) {
 	q := `UPDATE film SET `
 	qParts := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
@@ -219,22 +219,22 @@ func (r *FilmRepo) PatchFilm(id int, request film.FilmRequest) (film.FilmRespons
 	row, err := r.db.Query(q, args...)
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	for row.Next() {
 		if err := row.Scan(&updatedId); err != nil {
-			return film.FilmResponse{}, err
+			return presenter.FilmResponse{}, err
 		}
 	}
 	if updatedId != id {
-		return film.FilmResponse{}, errors.New("entity not found")
+		return presenter.FilmResponse{}, errors.New("entity not found")
 	}
 
 	err = r.updateFilmsId(request, id)
 
 	if err != nil {
-		return film.FilmResponse{}, err
+		return presenter.FilmResponse{}, err
 	}
 
 	log.Printf("Patch film with id %d", id)
@@ -257,7 +257,7 @@ func (r *FilmRepo) DeleteFilm(id int) error {
 	return nil
 }
 
-func (r *FilmRepo) updateFilmsId(request film.FilmRequest, id int) error {
+func (r *FilmRepo) updateFilmsId(request presenter.FilmRequest, id int) error {
 	if request.ActorsId == nil {
 		return nil
 	}
@@ -291,11 +291,11 @@ func (r *FilmRepo) updateFilmsId(request film.FilmRequest, id int) error {
 	return nil
 }
 
-func (r *FilmRepo) SearchFilmsByName(name string) ([]film.FilmResponse, error) {
-	films := make([]film.FilmResponse, 0)
+func (r *FilmRepo) SearchFilmsByName(name string) ([]presenter.FilmResponse, error) {
+	films := make([]presenter.FilmResponse, 0)
 	isFilmExistsMap := make(map[int]int)
 	mapActors := make(map[int][]int)
-	fil := film.FilmResponse{}
+	fil := presenter.FilmResponse{}
 	var releaseDate string
 	var actorId sql.NullInt64
 	query, err := r.db.Prepare("SELECT film.id, name, description, release_date, rating, actor_id FROM film " +
@@ -337,12 +337,12 @@ func (r *FilmRepo) SearchFilmsByName(name string) ([]film.FilmResponse, error) {
 	return films, nil
 }
 
-func (r *FilmRepo) SearchFilmsByActor(name string) ([]film.FilmResponse, error) {
-	films := make([]film.FilmResponse, 0)
+func (r *FilmRepo) SearchFilmsByActor(name string) ([]presenter.FilmResponse, error) {
+	films := make([]presenter.FilmResponse, 0)
 	isFilmExistsMap := make(map[int]int)
 	mapActors := make(map[int][]int)
 
-	fil := film.FilmResponse{}
+	fil := presenter.FilmResponse{}
 	var releaseDate string
 	var actorId sql.NullInt64
 	query, err := r.db.Prepare("SELECT film.id, film.name, description, release_date, rating, actor_id FROM film " +
