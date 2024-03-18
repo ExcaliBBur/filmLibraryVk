@@ -12,13 +12,13 @@ func HandleError(w http.ResponseWriter, err error, status int) {
 	http.Error(w, err.Error(), status)
 }
 
-func GetPathId(w http.ResponseWriter, r *http.Request, prefix string) int {
+func GetPathId(w http.ResponseWriter, r *http.Request, prefix string) (int, error) {
 	idString := strings.TrimPrefix(r.URL.Path, prefix)
 	id, err := strconv.Atoi(idString)
 
 	if err != nil {
 		HandleError(w, err, http.StatusBadRequest)
-		return -1
+		return 0, err
 	}
-	return id
+	return id, nil
 }

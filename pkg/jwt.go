@@ -67,6 +67,32 @@ func ValidateUserRoleJWT(w http.ResponseWriter, r *http.Request) error {
 	return errors.New("invalid author token provided")
 }
 
+func MockValidateJWT(w http.ResponseWriter, r *http.Request) error {
+	tokenString := getTokenFromRequest(w, r)
+	if tokenString == "ADMIN" || tokenString == "USER" {
+		return nil
+	}
+	return errors.New("invalid token provided")
+}
+
+func MockValidateAdminRoleJWT(w http.ResponseWriter, r *http.Request) error {
+	tokenString := getTokenFromRequest(w, r)
+	if tokenString == "ADMIN" {
+		return nil
+	}
+	log.Printf("Forbidden")
+	return errors.New("invalid admin token provided")
+}
+
+func MockValidateUserRoleJWT(w http.ResponseWriter, r *http.Request) error {
+	tokenString := getTokenFromRequest(w, r)
+	if tokenString == "USER" || tokenString == "ADMIN" {
+		return nil
+	}
+	log.Printf("Forbidden")
+	return errors.New("invalid author token provided")
+}
+
 func getToken(w http.ResponseWriter, r *http.Request) (*jwt.Token, error) {
 	tokenString := getTokenFromRequest(w, r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

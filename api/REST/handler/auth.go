@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"filmLibraryVk/api/REST/presenter"
 	"filmLibraryVk/pkg"
 	"fmt"
@@ -25,7 +26,8 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 	validate := validator.New()
 
 	if err := validate.Struct(register); err != nil {
-		pkg.HandleError(w, err, http.StatusBadRequest)
+		pkg.HandleError(w, errors.New("Invalid request body. Username length must be >= 2, " +
+			"password length must be [8, 16]"), http.StatusBadRequest)
 		return
 	}
 
@@ -56,7 +58,8 @@ func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) {
 	validate := validator.New()
 
 	if err := validate.Struct(login); err != nil {
-		pkg.HandleError(w, err, http.StatusBadRequest)
+		pkg.HandleError(w, errors.New("Invalid request body. Username length must be >= 2, " +
+			"password length must be [8, 16]"), http.StatusBadRequest)
 		return
 	}
 
@@ -67,6 +70,5 @@ func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintf(w, "jwt: %s", jwt)
 }

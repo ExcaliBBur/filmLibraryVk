@@ -55,15 +55,15 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">filmLibraryVk/api/REST/handler/actor.go (52.7%)</option>
+				<option value="file0">filmLibraryVk/api/REST/handler/actor.go (54.5%)</option>
 				
-				<option value="file1">filmLibraryVk/api/REST/handler/auth.go (65.7%)</option>
+				<option value="file1">filmLibraryVk/api/REST/handler/auth.go (82.9%)</option>
 				
-				<option value="file2">filmLibraryVk/api/REST/handler/film.go (45.8%)</option>
+				<option value="file2">filmLibraryVk/api/REST/handler/film.go (54.2%)</option>
 				
 				<option value="file3">filmLibraryVk/api/REST/handler/handler.go (0.0%)</option>
 				
-				<option value="file4">filmLibraryVk/api/REST/handler/user.go (52.9%)</option>
+				<option value="file4">filmLibraryVk/api/REST/handler/user.go (54.9%)</option>
 				
 				</select>
 			</div>
@@ -157,7 +157,7 @@ func (h *Handler) mockActors(w http.ResponseWriter, r *http.Request) <span class
                 h.getActors(w)</span>
         case "POST":<span class="cov8" title="1">
                 h.createActor(w, r)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
@@ -189,7 +189,7 @@ func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) <span class=
                         return
                 }</span>
                 <span class="cov8" title="1">h.deleteActor(w, id)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
@@ -299,7 +299,7 @@ import (
 )
 
 func (h *Handler) register(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        if r.Method != "POST" </span><span class="cov0" title="0">{
+        if r.Method != "POST" </span><span class="cov8" title="1">{
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
                 return
         }</span>
@@ -331,7 +331,7 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) <span class="
 }
 
 func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        if r.Method != "POST" </span><span class="cov0" title="0">{
+        if r.Method != "POST" </span><span class="cov8" title="1">{
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
                 return
         }</span>
@@ -353,7 +353,7 @@ func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) <span cla
 
         <span class="cov8" title="1">jwt, err := h.services.Login(login)
 
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return
         }</span>
@@ -468,7 +468,7 @@ func (h *Handler) mockFilm(w http.ResponseWriter, r *http.Request) <span class="
                         return
                 }</span>
                 <span class="cov8" title="1">h.deleteFilm(w, id)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 
@@ -480,7 +480,7 @@ func (h *Handler) mockFilms(w http.ResponseWriter, r *http.Request) <span class=
                 h.getFilms(w, r.URL.Query().Get("sortBy"))</span>
         case "POST":<span class="cov8" title="1">
                 h.createFilm(w, r)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
@@ -612,19 +612,19 @@ func (h *Handler) deleteFilm(w http.ResponseWriter, id int) <span class="cov8" t
         }</span>
 }
 
-func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         var films []presenter.FilmResponse
         var err error
-        if r.URL.Query().Get("name") != "" </span><span class="cov0" title="0">{
+        if r.URL.Query().Get("name") != "" </span><span class="cov8" title="1">{
                 films, err = h.services.SearchFilmsBy("name", r.URL.Query().Get("name"))
-        }</span> else<span class="cov0" title="0"> if r.URL.Query().Get("actor") != "" </span><span class="cov0" title="0">{
+        }</span> else<span class="cov8" title="1"> if r.URL.Query().Get("actor") != "" </span><span class="cov8" title="1">{
                 films, err = h.services.SearchFilmsBy("actor", r.URL.Query().Get("actor"))
         }</span>
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusInternalServerError)
                 return
         }</span>
-        <span class="cov0" title="0">reqBodyBytes := new(bytes.Buffer)
+        <span class="cov8" title="1">reqBodyBytes := new(bytes.Buffer)
         json.NewEncoder(reqBodyBytes).Encode(films)
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
@@ -738,7 +738,7 @@ func (h *Handler) mockUsers(w http.ResponseWriter, r *http.Request) <span class=
         switch r.Method </span>{
         case "GET":<span class="cov8" title="1">
                 h.getUsers(w)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
@@ -769,7 +769,7 @@ func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) <span class="
                 }</span>
 
                 <span class="cov8" title="1">h.deleteUser(w, id)</span>
-        default:<span class="cov0" title="0">
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }

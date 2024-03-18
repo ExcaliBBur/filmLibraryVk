@@ -2,8 +2,10 @@ port: "8080"
 
 db:
   host:     "localhost"
+  #host:  "db"
   port:     "5432"
   username: "postgres"
-  dbname:   "filmLibrary"
+  #dbname:   "postgres
+  dbname: "filmLibrary"
   sslmode:  "disable"
   migration_url: "file://migrations"

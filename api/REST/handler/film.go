@@ -16,8 +16,8 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.getFilm(w, id)
@@ -27,8 +27,8 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.putFilm(w, r, id)
@@ -38,8 +38,8 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.patchFilm(w, r, id)
@@ -49,8 +49,8 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.deleteFilm(w, id)
@@ -70,6 +70,51 @@ func (h *Handler) films(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		h.createFilm(w, r)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (h *Handler) mockFilm(w http.ResponseWriter, r *http.Request) {
+	var prefix = "/api/film/"
+
+	switch r.Method {
+	case "GET":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.getFilm(w, id)
+	case "PUT":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.putFilm(w, r, id)
+	case "PATCH":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.patchFilm(w, r, id)
+	case "DELETE":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.deleteFilm(w, id)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+
+}
+
+func (h *Handler) mockFilms(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		h.getFilms(w, r.URL.Query().Get("sortBy"))
+	case "POST":
 		h.createFilm(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)

@@ -31,8 +31,8 @@ func (h *Handler) user(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 
@@ -43,8 +43,8 @@ func (h *Handler) user(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 
@@ -55,8 +55,48 @@ func (h *Handler) user(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+
+		h.deleteUser(w, id)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (h *Handler) mockUsers(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		h.getUsers(w)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) {
+	var prefix = "/api/user/"
+	switch r.Method {
+	case "GET":
+		h.getUser(w, r)
+	case "PUT":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+
+		h.putUser(w, r, id)
+	case "PATCH":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+
+		h.patchUser(w, r, id)
+	case "DELETE":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 
@@ -78,8 +118,8 @@ func (h *Handler) getUsers(w http.ResponseWriter) {
 }
 
 func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) {
-	id := pkg.GetPathId(w, r, "/api/user/")
-	if id == -1 {
+	id, err := pkg.GetPathId(w, r, "/api/user/")
+	if err != nil {
 		return
 	}
 

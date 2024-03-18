@@ -13,8 +13,8 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/actor/"
 	switch r.Method {
 	case "GET":
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.getActor(w, id)
@@ -24,8 +24,8 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.putActor(w, r, id)
@@ -35,8 +35,8 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.patchActor(w, r, id)
@@ -46,8 +46,8 @@ func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := pkg.GetPathId(w, r, prefix)
-		if id == -1 {
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
 			return
 		}
 		h.deleteActor(w, id)
@@ -67,6 +67,49 @@ func (h *Handler) actors(w http.ResponseWriter, r *http.Request) {
 		}
 
 		h.createActor(w, r)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (h *Handler) mockActors(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		h.getActors(w)
+	case "POST":
+		h.createActor(w, r)
+	default:
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) {
+	var prefix = "/api/actor/"
+	switch r.Method {
+	case "GET":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.getActor(w, id)
+	case "PUT":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.putActor(w, r, id)
+	case "PATCH":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.patchActor(w, r, id)
+	case "DELETE":
+		id, err := pkg.GetPathId(w, r, prefix)
+		if err != nil {
+			return
+		}
+		h.deleteActor(w, id)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}

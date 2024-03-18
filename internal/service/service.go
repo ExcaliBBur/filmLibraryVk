@@ -5,6 +5,9 @@ import (
 	"filmLibraryVk/internal/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
+
 type Actor interface {
 	GetActor(id int) (presenter.ActorResponse, error)
 	GetActors() ([]presenter.ActorResponse, error)

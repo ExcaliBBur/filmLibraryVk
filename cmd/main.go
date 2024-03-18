@@ -1,5 +1,6 @@
 package main
 
+
 import (
 	"filmLibraryVk/api/REST/handler"
 	"filmLibraryVk/internal/repository"
@@ -38,6 +39,7 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(pkg.Server)
+
 
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
 		log.Fatalf("can not run http server: %s", err.Error())
