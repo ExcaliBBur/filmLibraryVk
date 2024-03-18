@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+
 func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
 	var prefix = "/api/actor/"
 	switch r.Method {
@@ -115,6 +116,19 @@ func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+// Get actor by id
+// @Summary      Get actor by id
+// @Description  Get actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      400  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [get]
 func (h *Handler) getActor(w http.ResponseWriter, id int) {
 	actor, err := h.services.GetActor(id)
 	if err != nil {
@@ -126,6 +140,17 @@ func (h *Handler) getActor(w http.ResponseWriter, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+
+// Get actors
+// @Summary      Get actors
+// @Description  Get actors
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  []presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor [get]
 func (h *Handler) getActors(w http.ResponseWriter) {
 	actors, err := h.services.GetActors()
 	if err != nil {
@@ -158,6 +183,19 @@ func (h *Handler) createActor(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", id)
 }
 
+
+// Put actor by id only for ADMIN
+// @Summary      Put actor by id
+// @Description  Put actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param 		 id path int true "id"
+// @Param 		 request body presenter.ActorRequest true "actor"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [put]
 func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.ActorRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -178,6 +216,18 @@ func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Patch actor by id only for ADMIN
+// @Summary      Patch actor by id
+// @Description  Patch actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param 		 id path int true "id"
+// @Param 		 request body presenter.ActorRequest true "actor"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [patch]
 func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.ActorRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -198,6 +248,17 @@ func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Delete actor by id only for ADMIN
+// @Summary      Delete actor by id
+// @Description  Delete actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [delete]
 func (h *Handler) deleteActor(w http.ResponseWriter, id int) {
 	err := h.services.DeleteActor(id)
 	if err != nil {

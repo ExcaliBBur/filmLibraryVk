@@ -106,6 +106,16 @@ func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Get users
+// @Summary      Get users
+// @Description  Get users
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user [get]
 func (h *Handler) getUsers(w http.ResponseWriter) {
 	users, err := h.services.GetUsers()
 	if err != nil {
@@ -117,6 +127,16 @@ func (h *Handler) getUsers(w http.ResponseWriter) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Get user by id
+// @Summary      Get user by id
+// @Description  Get user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [get]
 func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) {
 	id, err := pkg.GetPathId(w, r, "/api/user/")
 	if err != nil {
@@ -133,6 +153,18 @@ func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Put user by id only for ADMIN
+// @Summary      Put user by id
+// @Description  Put user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.UserRequest true "user"
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [put]
 func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -160,6 +192,18 @@ func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Patch user by id only for ADMIN
+// @Summary      Patch user by id
+// @Description  Patch user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.UserRequest true "user"
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [patch]
 func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -189,6 +233,18 @@ func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Delete user by id only for ADMIN
+// @Summary      Delete user by id
+// @Description  Delete user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.UserRequest true "user"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [delete]
 func (h *Handler) deleteUser(w http.ResponseWriter, id int) {
 	err := h.services.DeleteUser(id)
 	if err != nil {

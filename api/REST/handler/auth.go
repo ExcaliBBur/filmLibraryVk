@@ -10,6 +10,16 @@ import (
 	"net/http"
 )
 
+// Register an account
+// @Summary      Register an account
+// @Description  Register an account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param request body presenter.Register true "register"
+// @Success      201  {object}  string
+// @Failure      400  {object}  string
+// @Router       /auth/register [post]
 func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -42,6 +52,16 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "jwt: %s", jwt)
 }
 
+// Authenticate to account
+// @Summary      Authenticate to account
+// @Description  Authenticate to account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param 		 request body presenter.Login true "login"
+// @Success      200  {object}  string
+// @Failure      400  {object}  string
+// @Router       /auth/authenticate [post]
 func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)

@@ -130,6 +130,17 @@ func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Get film by id
+// @Summary      Get film by id
+// @Description  Get film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 id path int true "id"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [get]
 func (h *Handler) getFilm(w http.ResponseWriter, id int) {
 	film, err := h.services.GetFilm(id)
 	if err != nil {
@@ -141,6 +152,16 @@ func (h *Handler) getFilm(w http.ResponseWriter, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Get films
+// @Summary      Get fils
+// @Description  Get films
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  []presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film [get]
 func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) {
 	films, err := h.services.GetFilms(sortBy)
 	if err != nil {
@@ -152,6 +173,18 @@ func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Create film only for ADMIN
+// @Summary      Create film
+// @Description  Create film
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403 {object}  string
+// @Router       /film [post]
 func (h *Handler) createFilm(w http.ResponseWriter, r *http.Request) {
 	var request presenter.FilmRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -180,6 +213,18 @@ func (h *Handler) createFilm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", id)
 }
 
+// Put film by id only for ADMIN
+// @Summary      Put film by id
+// @Description  Put film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [put]
 func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.FilmRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -207,6 +252,18 @@ func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Patch film by id only for ADMIN
+// @Summary      Patch film by id
+// @Description  Patch film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Param 		 request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [patch]
 func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) {
 	var request presenter.FilmRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -240,6 +297,17 @@ func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) {
 	fmt.Fprintf(w, "%s", reqBodyBytes.String())
 }
 
+// Delete film by id only for ADMIN
+// @Summary      Delete film by id
+// @Description  Delete film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 id   path 	int 	true "id"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [delete]
 func (h *Handler) deleteFilm(w http.ResponseWriter, id int) {
 	err := h.services.DeleteFilm(id)
 	if err != nil {
@@ -248,6 +316,17 @@ func (h *Handler) deleteFilm(w http.ResponseWriter, id int) {
 	}
 }
 
+// Search films by name or actor
+// @Summary      Search films
+// @Description  Search films by name or actor
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param 		 field   query 	string 	true "field"
+// @Success      200  {object}  []presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/search [get]
 func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) {
 	var films []presenter.FilmResponse
 	var err error
