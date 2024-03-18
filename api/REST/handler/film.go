@@ -11,49 +11,34 @@ import (
 	"net/http"
 )
 
+var prefixFilm = "/api/film/"
+
 func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/film/"
 
 	switch r.Method {
 	case "GET":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.getFilm(w, id)
+		h.getFilm(w, r)
 	case "PUT":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.putFilm(w, r, id)
+		h.putFilm(w, r)
 	case "PATCH":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.patchFilm(w, r, id)
+		h.patchFilm(w, r)
 	case "DELETE":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.deleteFilm(w, id)
+		h.deleteFilm(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
@@ -63,7 +48,7 @@ func (h *Handler) film(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) films(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		h.getFilms(w, r.URL.Query().Get("sortBy"))
+		h.getFilms(w, r)
 	case "POST":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
@@ -76,50 +61,6 @@ func (h *Handler) films(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) mockFilm(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/film/"
-
-	switch r.Method {
-	case "GET":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.getFilm(w, id)
-	case "PUT":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.putFilm(w, r, id)
-	case "PATCH":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.patchFilm(w, r, id)
-	case "DELETE":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.deleteFilm(w, id)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-
-}
-
-func (h *Handler) mockFilms(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.getFilms(w, r.URL.Query().Get("sortBy"))
-	case "POST":
-		h.createFilm(w, r)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-}
 
 func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -141,7 +82,12 @@ func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /film/{id} [get]
-func (h *Handler) getFilm(w http.ResponseWriter, id int) {
+func (h *Handler) getFilm(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixFilm)
+	if err != nil {
+		return
+	}
+
 	film, err := h.services.GetFilm(id)
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -162,8 +108,8 @@ func (h *Handler) getFilm(w http.ResponseWriter, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /film [get]
-func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) {
-	films, err := h.services.GetFilms(sortBy)
+func (h *Handler) getFilms(w http.ResponseWriter, r *http.Request) {
+	films, err := h.services.GetFilms(r.URL.Query().Get("sortBy"))
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusInternalServerError)
 		return
@@ -225,9 +171,14 @@ func (h *Handler) createFilm(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /film/{id} [put]
-func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixFilm)
+	if err != nil {
+		return
+	}
+
 	var request presenter.FilmRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -264,9 +215,14 @@ func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /film/{id} [patch]
-func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixFilm)
+	if err != nil {
+		return
+	}
+
 	var request presenter.FilmRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -308,8 +264,13 @@ func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /film/{id} [delete]
-func (h *Handler) deleteFilm(w http.ResponseWriter, id int) {
-	err := h.services.DeleteFilm(id)
+func (h *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixFilm)
+	if err != nil {
+		return
+	}
+
+	err = h.services.DeleteFilm(id)
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
 		return

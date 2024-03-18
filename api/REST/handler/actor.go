@@ -9,49 +9,33 @@ import (
 	"net/http"
 )
 
+var prefixActor = "/api/actor/"
 
 func (h *Handler) actor(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/actor/"
 	switch r.Method {
 	case "GET":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.getActor(w, id)
+		h.getActor(w, r)
 	case "PUT":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.putActor(w, r, id)
+		h.putActor(w, r)
 	case "PATCH":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.patchActor(w, r, id)
+		h.patchActor(w, r)
 	case "DELETE":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.deleteActor(w, id)
+		h.deleteActor(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
@@ -73,50 +57,6 @@ func (h *Handler) actors(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) mockActors(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.getActors(w)
-	case "POST":
-		h.createActor(w, r)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-}
-
-func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/actor/"
-	switch r.Method {
-	case "GET":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.getActor(w, id)
-	case "PUT":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.putActor(w, r, id)
-	case "PATCH":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.patchActor(w, r, id)
-	case "DELETE":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-		h.deleteActor(w, id)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-}
-
-
 // Get actor by id
 // @Summary      Get actor by id
 // @Description  Get actor by id
@@ -129,7 +69,12 @@ func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /actor/{id} [get]
-func (h *Handler) getActor(w http.ResponseWriter, id int) {
+func (h *Handler) getActor(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixActor)
+	if err != nil {
+		return
+	}
+
 	actor, err := h.services.GetActor(id)
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -196,9 +141,14 @@ func (h *Handler) createActor(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /actor/{id} [put]
-func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) putActor(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixActor)
+	if err != nil {
+		return
+	}
+
 	var request presenter.ActorRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -228,9 +178,14 @@ func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /actor/{id} [patch]
-func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixActor)
+	if err != nil {
+		return
+	}
+
 	var request presenter.ActorRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -259,8 +214,13 @@ func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /actor/{id} [delete]
-func (h *Handler) deleteActor(w http.ResponseWriter, id int) {
-	err := h.services.DeleteActor(id)
+func (h *Handler) deleteActor(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixActor)
+	if err != nil {
+		return
+	}
+
+	err = h.services.DeleteActor(id)
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
 		return

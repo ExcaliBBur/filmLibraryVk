@@ -55,15 +55,15 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">filmLibraryVk/api/REST/handler/actor.go (54.5%)</option>
+				<option value="file0">filmLibraryVk/api/REST/handler/actor.go (73.9%)</option>
 				
 				<option value="file1">filmLibraryVk/api/REST/handler/auth.go (82.9%)</option>
 				
-				<option value="file2">filmLibraryVk/api/REST/handler/film.go (54.2%)</option>
+				<option value="file2">filmLibraryVk/api/REST/handler/film.go (67.5%)</option>
 				
 				<option value="file3">filmLibraryVk/api/REST/handler/handler.go (0.0%)</option>
 				
-				<option value="file4">filmLibraryVk/api/REST/handler/user.go (54.9%)</option>
+				<option value="file4">filmLibraryVk/api/REST/handler/user.go (69.5%)</option>
 				
 				</select>
 			</div>
@@ -88,56 +88,41 @@ import (
         "net/http"
 )
 
-func (h *Handler) actor(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
-        var prefix = "/api/actor/"
+var prefixActor = "/api/actor/"
+
+func (h *Handler) actor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         switch r.Method </span>{
-        case "GET":<span class="cov0" title="0">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.getActor(w, id)</span>
-        case "PUT":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+        case "GET":<span class="cov8" title="1">
+                h.getActor(w, r)</span>
+        case "PUT":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.putActor(w, r, id)</span>
-        case "PATCH":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">h.putActor(w, r)</span>
+        case "PATCH":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.patchActor(w, r, id)</span>
-        case "DELETE":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">h.patchActor(w, r)</span>
+        case "DELETE":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.deleteActor(w, id)</span>
-        default:<span class="cov0" title="0">
+                <span class="cov0" title="0">h.deleteActor(w, r)</span>
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
 
-func (h *Handler) actors(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (h *Handler) actors(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         switch r.Method </span>{
-        case "GET":<span class="cov0" title="0">
+        case "GET":<span class="cov8" title="1">
                 h.getActors(w)</span>
         case "POST":<span class="cov0" title="0">
                 if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
@@ -146,56 +131,30 @@ func (h *Handler) actors(w http.ResponseWriter, r *http.Request) <span class="co
                 }</span>
 
                 <span class="cov0" title="0">h.createActor(w, r)</span>
-        default:<span class="cov0" title="0">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-}
-
-func (h *Handler) mockActors(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                h.getActors(w)</span>
-        case "POST":<span class="cov8" title="1">
-                h.createActor(w, r)</span>
         default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
 
-func (h *Handler) mockActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        var prefix = "/api/actor/"
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.getActor(w, id)</span>
-        case "PUT":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.putActor(w, r, id)</span>
-        case "PATCH":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.patchActor(w, r, id)</span>
-        case "DELETE":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.deleteActor(w, id)</span>
-        default:<span class="cov8" title="1">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-}
+// Get actor by id
+// @Summary      Get actor by id
+// @Description  Get actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      400  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [get]
+func (h *Handler) getActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixActor)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
 
-func (h *Handler) getActor(w http.ResponseWriter, id int) <span class="cov8" title="1">{
-        actor, err := h.services.GetActor(id)
+        <span class="cov8" title="1">actor, err := h.services.GetActor(id)
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return
@@ -205,6 +164,17 @@ func (h *Handler) getActor(w http.ResponseWriter, id int) <span class="cov8" tit
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
+
+// Get actors
+// @Summary      Get actors
+// @Description  Get actors
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  []presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor [get]
 func (h *Handler) getActors(w http.ResponseWriter) <span class="cov8" title="1">{
         actors, err := h.services.GetActors()
         if err != nil </span><span class="cov0" title="0">{
@@ -237,9 +207,27 @@ func (h *Handler) createActor(w http.ResponseWriter, r *http.Request) <span clas
         fmt.Fprintf(w, "%d", id)</span>
 }
 
-func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.ActorRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+
+// Put actor by id only for ADMIN
+// @Summary      Put actor by id
+// @Description  Put actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param                  id path int true "id"
+// @Param                  request body presenter.ActorRequest true "actor"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [put]
+func (h *Handler) putActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixActor)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.ActorRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -257,9 +245,26 @@ func (h *Handler) putActor(w http.ResponseWriter, r *http.Request, id int) <span
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.ActorRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+// Patch actor by id only for ADMIN
+// @Summary      Patch actor by id
+// @Description  Patch actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param                  id path int true "id"
+// @Param                  request body presenter.ActorRequest true "actor"
+// @Success      200  {object}  presenter.ActorResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [patch]
+func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixActor)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.ActorRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -277,8 +282,24 @@ func (h *Handler) patchActor(w http.ResponseWriter, r *http.Request, id int) <sp
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) deleteActor(w http.ResponseWriter, id int) <span class="cov8" title="1">{
-        err := h.services.DeleteActor(id)
+// Delete actor by id only for ADMIN
+// @Summary      Delete actor by id
+// @Description  Delete actor by id
+// @Tags         actors
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /actor/{id} [delete]
+func (h *Handler) deleteActor(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixActor)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = h.services.DeleteActor(id)
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return
@@ -298,6 +319,16 @@ import (
         "net/http"
 )
 
+// Register an account
+// @Summary      Register an account
+// @Description  Register an account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param request body presenter.Register true "register"
+// @Success      201  {object}  string
+// @Failure      400  {object}  string
+// @Router       /auth/register [post]
 func (h *Handler) register(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         if r.Method != "POST" </span><span class="cov8" title="1">{
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -330,6 +361,16 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) <span class="
         fmt.Fprintf(w, "jwt: %s", jwt)</span>
 }
 
+// Authenticate to account
+// @Summary      Authenticate to account
+// @Description  Authenticate to account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param                  request body presenter.Login true "login"
+// @Success      200  {object}  string
+// @Failure      400  {object}  string
+// @Router       /auth/authenticate [post]
 func (h *Handler) authenticate(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         if r.Method != "POST" </span><span class="cov8" title="1">{
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -375,59 +416,44 @@ import (
         "net/http"
 )
 
-func (h *Handler) film(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
-        var prefix = "/api/film/"
+var prefixFilm = "/api/film/"
+
+func (h *Handler) film(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
 
         switch r.Method </span>{
-        case "GET":<span class="cov0" title="0">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.getFilm(w, id)</span>
-        case "PUT":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+        case "GET":<span class="cov8" title="1">
+                h.getFilm(w, r)</span>
+        case "PUT":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.putFilm(w, r, id)</span>
-        case "PATCH":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">h.putFilm(w, r)</span>
+        case "PATCH":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.patchFilm(w, r, id)</span>
-        case "DELETE":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">h.patchFilm(w, r)</span>
+        case "DELETE":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-                <span class="cov0" title="0">h.deleteFilm(w, id)</span>
-        default:<span class="cov0" title="0">
+                <span class="cov0" title="0">h.deleteFilm(w, r)</span>
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 
 }
 
-func (h *Handler) films(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+func (h *Handler) films(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         switch r.Method </span>{
         case "GET":<span class="cov0" title="0">
-                h.getFilms(w, r.URL.Query().Get("sortBy"))</span>
+                h.getFilms(w, r)</span>
         case "POST":<span class="cov0" title="0">
                 if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
@@ -435,55 +461,11 @@ func (h *Handler) films(w http.ResponseWriter, r *http.Request) <span class="cov
                 }</span>
 
                 <span class="cov0" title="0">h.createFilm(w, r)</span>
-        default:<span class="cov0" title="0">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-}
-
-func (h *Handler) mockFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        var prefix = "/api/film/"
-
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.getFilm(w, id)</span>
-        case "PUT":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.putFilm(w, r, id)</span>
-        case "PATCH":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.patchFilm(w, r, id)</span>
-        case "DELETE":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-                <span class="cov8" title="1">h.deleteFilm(w, id)</span>
-        default:<span class="cov8" title="1">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-
-}
-
-func (h *Handler) mockFilms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                h.getFilms(w, r.URL.Query().Get("sortBy"))</span>
-        case "POST":<span class="cov8" title="1">
-                h.createFilm(w, r)</span>
         default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
+
 
 func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
         switch r.Method </span>{
@@ -494,8 +476,24 @@ func (h *Handler) filmSearch(w http.ResponseWriter, r *http.Request) <span class
         }
 }
 
-func (h *Handler) getFilm(w http.ResponseWriter, id int) <span class="cov8" title="1">{
-        film, err := h.services.GetFilm(id)
+// Get film by id
+// @Summary      Get film by id
+// @Description  Get film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  id path int true "id"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [get]
+func (h *Handler) getFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixFilm)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">film, err := h.services.GetFilm(id)
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return
@@ -505,8 +503,18 @@ func (h *Handler) getFilm(w http.ResponseWriter, id int) <span class="cov8" titl
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) <span class="cov8" title="1">{
-        films, err := h.services.GetFilms(sortBy)
+// Get films
+// @Summary      Get fils
+// @Description  Get films
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  []presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film [get]
+func (h *Handler) getFilms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        films, err := h.services.GetFilms(r.URL.Query().Get("sortBy"))
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusInternalServerError)
                 return
@@ -516,6 +524,18 @@ func (h *Handler) getFilms(w http.ResponseWriter, sortBy string) <span class="co
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
+// Create film only for ADMIN
+// @Summary      Create film
+// @Description  Create film
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403 {object}  string
+// @Router       /film [post]
 func (h *Handler) createFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         var request presenter.FilmRequest
         err := json.NewDecoder(r.Body).Decode(&amp;request)
@@ -544,9 +564,26 @@ func (h *Handler) createFilm(w http.ResponseWriter, r *http.Request) <span class
         fmt.Fprintf(w, "%d", id)</span>
 }
 
-func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.FilmRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+// Put film by id only for ADMIN
+// @Summary      Put film by id
+// @Description  Put film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [put]
+func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixFilm)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.FilmRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -571,9 +608,26 @@ func (h *Handler) putFilm(w http.ResponseWriter, r *http.Request, id int) <span 
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.FilmRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+// Patch film by id only for ADMIN
+// @Summary      Patch film by id
+// @Description  Patch film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.FilmRequest true "film"
+// @Success      200  {object}  presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [patch]
+func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixFilm)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.FilmRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -604,14 +658,41 @@ func (h *Handler) patchFilm(w http.ResponseWriter, r *http.Request, id int) <spa
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) deleteFilm(w http.ResponseWriter, id int) <span class="cov8" title="1">{
-        err := h.services.DeleteFilm(id)
+// Delete film by id only for ADMIN
+// @Summary      Delete film by id
+// @Description  Delete film by id
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/{id} [delete]
+func (h *Handler) deleteFilm(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixFilm)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = h.services.DeleteFilm(id)
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return
         }</span>
 }
 
+// Search films by name or actor
+// @Summary      Search films
+// @Description  Search films by name or actor
+// @Tags         films
+// @Accept       json
+// @Produce      json
+// @Param                  field   query         string         true "field"
+// @Success      200  {object}  []presenter.FilmResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /film/search [get]
 func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         var films []presenter.FilmResponse
         var err error
@@ -635,7 +716,10 @@ func (h *Handler) searchFilms(w http.ResponseWriter, r *http.Request) <span clas
 import (
         "filmLibraryVk/internal/service"
         "filmLibraryVk/pkg"
+        "github.com/swaggo/http-swagger/v2"
         "net/http"
+
+        "filmLibraryVk/docs"
 )
 
 type Handler struct {
@@ -647,7 +731,7 @@ func NewHandler(services *service.Service) *Handler <span class="cov0" title="0"
 }</span>
 
 func (h *Handler) InitRoutes() http.Handler <span class="cov0" title="0">{
-        mux := http.NewServeMux()
+        mux := initSwagger()
 
         mux.Handle("/api/actor", pkg.JWTAuthUser(h.actors))
         mux.Handle("/api/actor/", pkg.JWTAuthUser(h.actor))
@@ -661,6 +745,33 @@ func (h *Handler) InitRoutes() http.Handler <span class="cov0" title="0">{
 
         mux.Handle("/api/user", pkg.JWTAuthUser(h.users))
         mux.Handle("/api/user/", pkg.JWTAuthUser(h.user))
+
+        //c := cors.New(cors.Options{
+        //        AllowedOrigins:   []string{"*"},
+        //        AllowCredentials: true,
+        //        AllowedMethods:   []string{"*"},
+        //        AllowedHeaders:   []string{"*"},
+        //        AllowOriginFunc: func(origin string) bool {
+        //                return origin == "https://github.com"
+        //        },
+        //})
+        //handler := c.Handler(mux)
+
+        return mux
+}</span>
+
+func initSwagger() *http.ServeMux <span class="cov0" title="0">{
+        mux := http.NewServeMux()
+
+        docs.SwaggerInfo.Title = "Swagger"
+        docs.SwaggerInfo.Description = "This is a distributed calculation server."
+        docs.SwaggerInfo.Version = "1.0"
+        docs.SwaggerInfo.Host = "localhost:8080"
+        docs.SwaggerInfo.BasePath = "/api"
+
+        mux.Handle("/swagger/", httpSwagger.Handler(
+                httpSwagger.URL("doc.json"),
+        ))
 
         return mux
 }</span>
@@ -679,102 +790,58 @@ import (
         "net/http"
 )
 
-func (h *Handler) users(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+var prefixUser = "/api/user/"
+
+func (h *Handler) users(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         switch r.Method </span>{
         case "GET":<span class="cov0" title="0">
-                h.getUsers(w)</span>
-        default:<span class="cov0" title="0">
+                h.getUsers(w, r)</span>
+        default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
 
-func (h *Handler) user(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
-        var prefix = "/api/user/"
+func (h *Handler) user(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         switch r.Method </span>{
-        case "GET":<span class="cov0" title="0">
+        case "GET":<span class="cov8" title="1">
                 h.getUser(w, r)</span>
-        case "PUT":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+        case "PUT":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-
-                <span class="cov0" title="0">h.putUser(w, r, id)</span>
-        case "PATCH":<span class="cov0" title="0">
-                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
+                <span class="cov0" title="0">h.putUser(w, r)</span>
+        case "PATCH":<span class="cov8" title="1">
+                if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov8" title="1">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-
-                <span class="cov0" title="0">h.patchUser(w, r, id)</span>
+                <span class="cov0" title="0">h.patchUser(w, r)</span>
         case "DELETE":<span class="cov0" title="0">
                 if err := pkg.ValidateAdminRoleJWT(w, r); err != nil </span><span class="cov0" title="0">{
                         http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
                         return
                 }</span>
 
-                <span class="cov0" title="0">id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov0" title="0">{
-                        return
-                }</span>
-
-                <span class="cov0" title="0">h.deleteUser(w, id)</span>
-        default:<span class="cov0" title="0">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-}
-
-func (h *Handler) mockUsers(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                h.getUsers(w)</span>
+                <span class="cov0" title="0">h.deleteUser(w, r)</span>
         default:<span class="cov8" title="1">
                 http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
         }
 }
 
-func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        var prefix = "/api/user/"
-        switch r.Method </span>{
-        case "GET":<span class="cov8" title="1">
-                h.getUser(w, r)</span>
-        case "PUT":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-
-                <span class="cov8" title="1">h.putUser(w, r, id)</span>
-        case "PATCH":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-
-                <span class="cov8" title="1">h.patchUser(w, r, id)</span>
-        case "DELETE":<span class="cov8" title="1">
-                id, err := pkg.GetPathId(w, r, prefix)
-                if err != nil </span><span class="cov8" title="1">{
-                        return
-                }</span>
-
-                <span class="cov8" title="1">h.deleteUser(w, id)</span>
-        default:<span class="cov8" title="1">
-                http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)</span>
-        }
-}
-
-func (h *Handler) getUsers(w http.ResponseWriter) <span class="cov8" title="1">{
+// Get users
+// @Summary      Get users
+// @Description  Get users
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {object} []presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user [get]
+func (h *Handler) getUsers(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
         users, err := h.services.GetUsers()
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusInternalServerError)
@@ -785,8 +852,18 @@ func (h *Handler) getUsers(w http.ResponseWriter) <span class="cov8" title="1">{
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
+// Get user by id
+// @Summary      Get user by id
+// @Description  Get user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [get]
 func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
-        id, err := pkg.GetPathId(w, r, "/api/user/")
+        id, err := pkg.GetPathId(w, r, prefixUser)
         if err != nil </span><span class="cov8" title="1">{
                 return
         }</span>
@@ -801,9 +878,26 @@ func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) <span class="c
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.UserRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+// Put user by id only for ADMIN
+// @Summary      Put user by id
+// @Description  Put user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.UserRequest true "user"
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [put]
+func (h *Handler) putUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.UserRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -828,9 +922,26 @@ func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) <span 
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) <span class="cov8" title="1">{
-        var request presenter.UserRequest
-        err := json.NewDecoder(r.Body).Decode(&amp;request)
+// Patch user by id only for ADMIN
+// @Summary      Patch user by id
+// @Description  Patch user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.UserRequest true "user"
+// @Success      200  {object}  presenter.UserResponse
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [patch]
+func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">var request presenter.UserRequest
+        err = json.NewDecoder(r.Body).Decode(&amp;request)
 
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
@@ -857,8 +968,25 @@ func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) <spa
         fmt.Fprintf(w, "%s", reqBodyBytes.String())</span>
 }
 
-func (h *Handler) deleteUser(w http.ResponseWriter, id int) <span class="cov8" title="1">{
-        err := h.services.DeleteUser(id)
+// Delete user by id only for ADMIN
+// @Summary      Delete user by id
+// @Description  Delete user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param                  id   path         int         true "id"
+// @Param                  request body presenter.UserRequest true "user"
+// @Success      200  {object}  string
+// @Failure      401  {object}  string
+// @Failure      403  {object}  string
+// @Router       /user/{id} [delete]
+func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id, err := pkg.GetPathId(w, r, prefixUser)
+        if err != nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">err = h.services.DeleteUser(id)
         if err != nil </span><span class="cov0" title="0">{
                 pkg.HandleError(w, err, http.StatusBadRequest)
                 return

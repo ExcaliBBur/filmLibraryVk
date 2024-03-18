@@ -79,7 +79,7 @@ func TestHandler_getFilms(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film", pkg.MockJWTAuthUser(handler.mockFilms))
+			mux.Handle("/api/film", pkg.MockJWTAuthUser(handler.getFilms))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/api/film", nil)
@@ -171,7 +171,7 @@ func TestHandler_getFilm(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film/", pkg.MockJWTAuthUser(handler.mockFilm))
+			mux.Handle("/api/film/", pkg.MockJWTAuthUser(handler.getFilm))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/api/film/"+test.id, nil)
@@ -261,7 +261,7 @@ func TestHandler_postFilm(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film", pkg.MockJWTAuthAdmin(handler.mockFilms))
+			mux.Handle("/api/film", pkg.MockJWTAuthAdmin(handler.createFilm))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/api/film",
@@ -373,7 +373,7 @@ func TestHandler_putFilm(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.mockFilm))
+			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.putFilm))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PUT", "/api/film/"+test.id,
@@ -493,7 +493,7 @@ func TestHandler_patchFilm(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.mockFilm))
+			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.patchFilm))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PATCH", "/api/film/"+test.id,
@@ -569,7 +569,7 @@ func TestHandler_deleteFilm(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.mockFilm))
+			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.deleteFilm))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("DELETE", "/api/film/"+test.id, nil)
@@ -643,7 +643,7 @@ func TestHandler_films_invalid_method(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film", pkg.MockJWTAuthAdmin(handler.mockFilms))
+			mux.Handle("/api/film", pkg.MockJWTAuthAdmin(handler.films))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PUT", "/api/film",
@@ -657,10 +657,11 @@ func TestHandler_films_invalid_method(t *testing.T) {
 	}
 }
 
-func TestHandler_film_invalid_method(t *testing.T) {
+func TestHandler_filmMethods(t *testing.T) {
+
 	var dateFormat = "2006-01-02"
 
-	type mockBehavior func(r *mock_service.MockFilm, actor presenter.FilmRequest)
+	type mockBehavior func(r *mock_service.MockFilm, actor presenter.FilmRequest, id string)
 	var name = new(string)
 	*name = "name"
 
@@ -682,6 +683,8 @@ func TestHandler_film_invalid_method(t *testing.T) {
 		headerName           string
 		headerValue          string
 		inputBody            string
+		method               string
+		id                   string
 		inputFilm            presenter.FilmRequest
 		mockBehavior         mockBehavior
 		expectedStatusCode   int
@@ -691,6 +694,35 @@ func TestHandler_film_invalid_method(t *testing.T) {
 			name:        "Method Not Allowed",
 			headerName:  "Authorization",
 			headerValue: "Bearer ADMIN",
+			method:      "POST",
+			inputBody: `{"name": "name", "description": "description", 
+						"releaseDate": "2021-10-12", "rating": 5, "actorsId": [1, 2]}`,
+			inputFilm:            presenter.FilmRequest{},
+			mockBehavior:         func(r *mock_service.MockFilm, film presenter.FilmRequest, id string) {},
+			expectedStatusCode:   405,
+			expectedResponseBody: "Method Not Allowed\n",
+		},
+		{
+			name:        "GET",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			method:      "GET",
+			id:          "1",
+			mockBehavior: func(r *mock_service.MockFilm, film presenter.FilmRequest, id string) {
+				idd, _ := strconv.Atoi(id)
+				r.EXPECT().GetFilm(idd).Return(presenter.FilmResponse{
+					Id: 1, Name: "name", Description: "description",
+					ReleaseDate: "2021-10-12", Rating: 5, ActorsId: []int{1, 2}}, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":1,\"name\":\"name\",\"description\":\"description\",\"ReleaseDate\":\"2021-10-12\",\"Rating\":5,\"actorsId\":[1,2]}\n",
+		},
+		{
+			name:        "PUT",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			method:      "PUT",
+			id:          "1",
 			inputBody: `{"name": "name", "description": "description", 
 						"releaseDate": "2021-10-12", "rating": 5, "actorsId": [1, 2]}`,
 			inputFilm: presenter.FilmRequest{
@@ -700,9 +732,36 @@ func TestHandler_film_invalid_method(t *testing.T) {
 				Rating:      rating,
 				ActorsId:    actorsId,
 			},
-			mockBehavior:         func(r *mock_service.MockFilm, film presenter.FilmRequest) {},
-			expectedStatusCode:   405,
-			expectedResponseBody: "Method Not Allowed\n",
+			mockBehavior: func(r *mock_service.MockFilm, actor presenter.FilmRequest, id string) {},
+			expectedStatusCode:   403,
+			expectedResponseBody: "Forbidden\n",
+		},
+		{
+			name:        "PATCH",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			method:      "PATCH",
+			id:          "1",
+			inputBody:   `{"name": "name", "rating": 5, "releaseDate": "2021-10-12"}`,
+			inputFilm: presenter.FilmRequest{
+				Name:        name,
+				Rating:      rating,
+				ReleaseDate: releaseDate,
+			},
+			mockBehavior: func(r *mock_service.MockFilm, film presenter.FilmRequest, id string) {},
+			expectedStatusCode:  403,
+			expectedResponseBody: "Forbidden\n",
+		},
+		{
+			name:        "DELETE",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			method:      "DELETE",
+			id:          "1",
+			mockBehavior: func(r *mock_service.MockFilm, film presenter.FilmRequest, id string) {},
+			expectedStatusCode: 403,
+			expectedResponseBody: "Forbidden\n",
+
 		},
 	}
 	for _, test := range tests {
@@ -711,17 +770,17 @@ func TestHandler_film_invalid_method(t *testing.T) {
 			defer c.Finish()
 
 			repo := mock_service.NewMockFilm(c)
-			test.mockBehavior(repo, test.inputFilm)
+			test.mockBehavior(repo, test.inputFilm, test.id)
 
 			services := &service.Service{Film: repo}
 			handler := Handler{services}
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.mockFilm))
+			mux.Handle("/api/film/", pkg.MockJWTAuthAdmin(handler.film))
 
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("POST", "/api/film/",
+			req := httptest.NewRequest(test.method, "/api/film/"+test.id,
 				bytes.NewBufferString(test.inputBody))
 			req.Header.Add(test.headerName, test.headerValue)
 			mux.ServeHTTP(w, req)

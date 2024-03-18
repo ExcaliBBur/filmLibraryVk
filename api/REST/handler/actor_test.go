@@ -77,7 +77,7 @@ func TestHandler_getActors(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor", pkg.MockJWTAuthUser(handler.mockActors))
+			mux.Handle("/api/actor", pkg.MockJWTAuthUser(handler.actors))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/api/actor", nil)
@@ -167,7 +167,7 @@ func TestHandler_getActor(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor/", pkg.MockJWTAuthUser(handler.mockActor))
+			mux.Handle("/api/actor/", pkg.MockJWTAuthUser(handler.actor))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/api/actor/"+test.id, nil)
@@ -252,7 +252,7 @@ func TestHandler_postActor(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor", pkg.MockJWTAuthAdmin(handler.mockActors))
+			mux.Handle("/api/actor", pkg.MockJWTAuthAdmin(handler.createActor))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/api/actor",
@@ -358,7 +358,7 @@ func TestHandler_putActor(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.mockActor))
+			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.putActor))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PUT", "/api/actor/"+test.id,
@@ -430,10 +430,10 @@ func TestHandler_patchActor(t *testing.T) {
 			expectedResponseBody: "strconv.Atoi: parsing \"1s\": invalid syntax\n",
 		},
 		{
-			name:                 "Entity not found",
-			headerName:           "Authorization",
-			headerValue:          "Bearer ADMIN",
-			id:                   "-1",
+			name:        "Entity not found",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			id:          "-1",
 			inputBody:   `{"name": "name", "birthday": "2021-10-12", "filmsId": [1, 2]}`,
 			inputActor: presenter.ActorRequest{
 				Name:     name,
@@ -477,7 +477,7 @@ func TestHandler_patchActor(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.mockActor))
+			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.patchActor))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PATCH", "/api/actor/"+test.id,
@@ -512,7 +512,7 @@ func TestHandler_deleteActor(t *testing.T) {
 				idd, _ := strconv.Atoi(id)
 				r.EXPECT().DeleteActor(idd)
 			},
-			expectedStatusCode:   200,
+			expectedStatusCode: 200,
 		},
 		{
 			name:                 "Invalid id",
@@ -553,7 +553,7 @@ func TestHandler_deleteActor(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.mockActor))
+			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.deleteActor))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("DELETE", "/api/actor/"+test.id, nil)
@@ -604,7 +604,7 @@ func TestHandler_actors_invalid_method(t *testing.T) {
 				Birthday: birthday,
 				FilmsId:  filmsId,
 			},
-			mockBehavior: func(r *mock_service.MockActor, actor presenter.ActorRequest) {},
+			mockBehavior:         func(r *mock_service.MockActor, actor presenter.ActorRequest) {},
 			expectedStatusCode:   405,
 			expectedResponseBody: "Method Not Allowed\n",
 		},
@@ -622,7 +622,7 @@ func TestHandler_actors_invalid_method(t *testing.T) {
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor", pkg.MockJWTAuthAdmin(handler.mockActors))
+			mux.Handle("/api/actor", pkg.MockJWTAuthAdmin(handler.actors))
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("PUT", "/api/actor",
@@ -639,7 +639,7 @@ func TestHandler_actors_invalid_method(t *testing.T) {
 func TestHandler_actor_invalid_method(t *testing.T) {
 	var dateFormat = "2006-01-02"
 
-	type mockBehavior func(r *mock_service.MockActor, actor presenter.ActorRequest)
+	type mockBehavior func(r *mock_service.MockActor, actor presenter.ActorRequest, id string)
 	var name = new(string)
 	*name = "name"
 
@@ -658,6 +658,8 @@ func TestHandler_actor_invalid_method(t *testing.T) {
 		headerName           string
 		headerValue          string
 		inputBody            string
+		id                   string
+		method               string
 		inputActor           presenter.ActorRequest
 		mockBehavior         mockBehavior
 		expectedStatusCode   int
@@ -667,6 +669,8 @@ func TestHandler_actor_invalid_method(t *testing.T) {
 			name:        "Method Not Allowed",
 			headerName:  "Authorization",
 			headerValue: "Bearer ADMIN",
+			method:      "POST",
+			id:          "1",
 			inputBody:   `{"name": "name", "sex": "sex", "birthday": "2021-10-12", "filmsId": [1, 2]}`,
 			inputActor: presenter.ActorRequest{
 				Name:     name,
@@ -674,9 +678,65 @@ func TestHandler_actor_invalid_method(t *testing.T) {
 				Birthday: birthday,
 				FilmsId:  filmsId,
 			},
-			mockBehavior: func(r *mock_service.MockActor, actor presenter.ActorRequest) {},
+			mockBehavior:         func(r *mock_service.MockActor, actor presenter.ActorRequest, id string) {},
 			expectedStatusCode:   405,
 			expectedResponseBody: "Method Not Allowed\n",
+		},
+		{
+			name:        "Ok admin",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			id:          "1",
+			mockBehavior: func(r *mock_service.MockActor, actor presenter.ActorRequest, id string) {
+				idd, _ := strconv.Atoi(id)
+				r.EXPECT().GetActor(idd).Return(presenter.ActorResponse{
+					Id: 1, Sex: "male", Birthday: "2021-10-12", Name: "username", FilmsId: []int{1, 2}}, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":1,\"name\":\"username\",\"sex\":\"male\",\"birthday\":\"2021-10-12\",\"filmsId\":[1,2]}\n",
+		},
+		{
+			name:        "PUT",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			id:          "1",
+			method:      "PUT",
+			inputBody:   `{"name": "name", "sex": "sex", "birthday": "2021-10-12", "filmsId": [1, 2]}`,
+			inputActor: presenter.ActorRequest{
+				Name:     name,
+				Sex:      sex,
+				Birthday: birthday,
+				FilmsId:  filmsId,
+			},
+			mockBehavior:         func(r *mock_service.MockActor, actor presenter.ActorRequest, id string) {},
+			expectedStatusCode:   403,
+			expectedResponseBody: "Forbidden\n",
+		},
+		{
+			name:        "PATCH",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			id:          "1",
+			method:      "PATCH",
+			inputBody:   `{"name": "name", "birthday": "2021-10-12", "filmsId": [1, 2]}`,
+			inputActor: presenter.ActorRequest{
+				Name:     name,
+				Birthday: birthday,
+				FilmsId:  filmsId,
+			},
+			mockBehavior: func(r *mock_service.MockActor, actor presenter.ActorRequest, id string) {},
+			expectedStatusCode:   403,
+			expectedResponseBody: "Forbidden\n",
+		},
+		{
+			name:        "DELETE",
+			headerName:  "Authorization",
+			headerValue: "Bearer ADMIN",
+			id:          "1",
+			method: "DELETE",
+			mockBehavior: func(r *mock_service.MockActor, actor presenter.ActorRequest, id string) {},
+			expectedStatusCode: 403,
+			expectedResponseBody: "Forbidden\n",
 		},
 	}
 	for _, test := range tests {
@@ -685,17 +745,17 @@ func TestHandler_actor_invalid_method(t *testing.T) {
 			defer c.Finish()
 
 			repo := mock_service.NewMockActor(c)
-			test.mockBehavior(repo, test.inputActor)
+			test.mockBehavior(repo, test.inputActor, test.id)
 
 			services := &service.Service{Actor: repo}
 			handler := Handler{services}
 
 			mux := http.NewServeMux()
 
-			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.mockActor))
+			mux.Handle("/api/actor/", pkg.MockJWTAuthAdmin(handler.actor))
 
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("POST", "/api/actor/",
+			req := httptest.NewRequest(test.method, "/api/actor/"+test.id,
 				bytes.NewBufferString(test.inputBody))
 			req.Header.Add(test.headerName, test.headerValue)
 			mux.ServeHTTP(w, req)

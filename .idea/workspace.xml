@@ -26,18 +26,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7ddcfe8-1fa1-4f71-a6ce-d723fa4b27a4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/docs/docs.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/swagger.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/swagger.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/REST/handler/actor.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/actor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/REST/handler/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/REST/handler/actor_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/actor_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/REST/handler/cover.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/cover.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/REST/handler/cover.out" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/cover.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/REST/handler/film.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/film.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/REST/handler/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/REST/handler/film_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/film_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/REST/handler/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/REST/handler/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/REST/handler/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,17 +87,8 @@
       <recent name="C:\projects\filmLibraryVk\test" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
-    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="filmLibraryVk" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/cmd/main.go" />
-      <package value="filmLibraryVk" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestHandler_film_invalid_method in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestHandler_user_invalid_method in filmLibraryVk/api/REST/handler">
+    <configuration name="TestHandler_actor_invalid_method in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="filmLibraryVk" />
       <working_directory value="$PROJECT_DIR$/api/REST/handler" />
       <framework value="gotest" />
@@ -108,10 +96,10 @@
       <package value="filmLibraryVk/api/REST/handler" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestHandler_film_invalid_method$" />
+      <pattern value="^TestHandler_actor_invalid_method$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestHandler_searchFilms in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestHandler_filmMethods in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="filmLibraryVk" />
       <working_directory value="$PROJECT_DIR$/api/REST/handler" />
       <framework value="gotest" />
@@ -119,7 +107,18 @@
       <package value="filmLibraryVk/api/REST/handler" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestHandler_searchFilms$" />
+      <pattern value="^TestHandler_filmMethods$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestHandler_films_invalid_method in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="filmLibraryVk" />
+      <working_directory value="$PROJECT_DIR$/api/REST/handler" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="filmLibraryVk/api/REST/handler" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestHandler_films_invalid_method$" />
       <method v="2" />
     </configuration>
     <configuration name="TestHandler_user_invalid_method in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -133,7 +132,7 @@
       <pattern value="^TestHandler_user_invalid_method$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestHandler_users_invalid_method in filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="go test filmLibraryVk/api/REST/handler" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="filmLibraryVk" />
       <working_directory value="$PROJECT_DIR$/api/REST/handler" />
       <framework value="gotest" />
@@ -141,16 +140,15 @@
       <package value="filmLibraryVk/api/REST/handler" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestHandler_users_invalid_method$" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Test.TestHandler_searchFilms in filmLibraryVk/api/REST/handler" />
         <item itemvalue="Go Test.TestHandler_user_invalid_method in filmLibraryVk/api/REST/handler" />
-        <item itemvalue="Go Test.TestHandler_users_invalid_method in filmLibraryVk/api/REST/handler" />
-        <item itemvalue="Go Test.TestHandler_film_invalid_method in filmLibraryVk/api/REST/handler" />
+        <item itemvalue="Go Test.TestHandler_actor_invalid_method in filmLibraryVk/api/REST/handler" />
+        <item itemvalue="Go Test.TestHandler_films_invalid_method in filmLibraryVk/api/REST/handler" />
+        <item itemvalue="Go Test.TestHandler_filmMethods in filmLibraryVk/api/REST/handler" />
+        <item itemvalue="Go Test.go test filmLibraryVk/api/REST/handler" />
       </list>
     </recent_temporary>
   </component>
@@ -222,22 +220,22 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="686" y="235" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1710501781146" />
-    <state width="1865" height="230" key="GridCell.Tab.0.bottom" timestamp="1710792101083">
+    <state width="1865" height="395" key="GridCell.Tab.0.bottom" timestamp="1710794988254">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1865" height="230" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1710792101083" />
-    <state width="1865" height="230" key="GridCell.Tab.0.center" timestamp="1710792101083">
+    <state width="1865" height="395" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1710794988254" />
+    <state width="1865" height="395" key="GridCell.Tab.0.center" timestamp="1710794988254">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1865" height="230" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1710792101083" />
-    <state width="1865" height="230" key="GridCell.Tab.0.left" timestamp="1710792101083">
+    <state width="1865" height="395" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1710794988254" />
+    <state width="1865" height="395" key="GridCell.Tab.0.left" timestamp="1710794988254">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1865" height="230" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1710792101083" />
-    <state width="1865" height="230" key="GridCell.Tab.0.right" timestamp="1710792101083">
+    <state width="1865" height="395" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1710794988254" />
+    <state width="1865" height="395" key="GridCell.Tab.0.right" timestamp="1710794988254">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1865" height="230" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1710792101083" />
+    <state width="1865" height="395" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1710794988254" />
     <state width="1865" height="347" key="GridCell.Tab.1.bottom" timestamp="1710700532192">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

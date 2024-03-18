@@ -11,17 +11,18 @@ import (
 	"net/http"
 )
 
+var prefixUser = "/api/user/"
+
 func (h *Handler) users(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		h.getUsers(w)
+		h.getUsers(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
 }
 
 func (h *Handler) user(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/user/"
 	switch r.Method {
 	case "GET":
 		h.getUser(w, r)
@@ -31,76 +32,21 @@ func (h *Handler) user(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.putUser(w, r, id)
+		h.putUser(w, r)
 	case "PATCH":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.patchUser(w, r, id)
+		h.patchUser(w, r)
 	case "DELETE":
 		if err := pkg.ValidateAdminRoleJWT(w, r); err != nil {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.deleteUser(w, id)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-}
-
-func (h *Handler) mockUsers(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		h.getUsers(w)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
-}
-
-func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) {
-	var prefix = "/api/user/"
-	switch r.Method {
-	case "GET":
-		h.getUser(w, r)
-	case "PUT":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.putUser(w, r, id)
-	case "PATCH":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.patchUser(w, r, id)
-	case "DELETE":
-		id, err := pkg.GetPathId(w, r, prefix)
-		if err != nil {
-			return
-		}
-
-		h.deleteUser(w, id)
+		h.deleteUser(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
@@ -116,7 +62,7 @@ func (h *Handler) mockUser(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /user [get]
-func (h *Handler) getUsers(w http.ResponseWriter) {
+func (h *Handler) getUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.services.GetUsers()
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusInternalServerError)
@@ -138,7 +84,7 @@ func (h *Handler) getUsers(w http.ResponseWriter) {
 // @Failure      403  {object}  string
 // @Router       /user/{id} [get]
 func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) {
-	id, err := pkg.GetPathId(w, r, "/api/user/")
+	id, err := pkg.GetPathId(w, r, prefixUser)
 	if err != nil {
 		return
 	}
@@ -165,9 +111,14 @@ func (h *Handler) getUser(w http.ResponseWriter, r *http.Request) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /user/{id} [put]
-func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) putUser(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixUser)
+	if err != nil {
+		return
+	}
+
 	var request presenter.UserRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -204,9 +155,14 @@ func (h *Handler) putUser(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /user/{id} [patch]
-func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) {
+func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixUser)
+	if err != nil {
+		return
+	}
+
 	var request presenter.UserRequest
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err = json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
@@ -245,8 +201,13 @@ func (h *Handler) patchUser(w http.ResponseWriter, r *http.Request, id int) {
 // @Failure      401  {object}  string
 // @Failure      403  {object}  string
 // @Router       /user/{id} [delete]
-func (h *Handler) deleteUser(w http.ResponseWriter, id int) {
-	err := h.services.DeleteUser(id)
+func (h *Handler) deleteUser(w http.ResponseWriter, r *http.Request) {
+	id, err := pkg.GetPathId(w, r, prefixUser)
+	if err != nil {
+		return
+	}
+
+	err = h.services.DeleteUser(id)
 	if err != nil {
 		pkg.HandleError(w, err, http.StatusBadRequest)
 		return
