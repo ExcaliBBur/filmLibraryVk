@@ -38,3 +38,31 @@
 * docker-compose файл для запуска окружения с работающим приложением и СУБД.
 
 Решение необходимо выложить на github и прислать ссылку.
+
+# Запуск
+
+```shell
+git clone https://github.com/ExcaliBBur/filmLibraryVk.git
+
+cd filmLibraryVk
+
+docker-compose build
+
+docker-compose up
+```
+
+Сервер доступен по адресу [localhost:8080](https://localhost:8080)
+Спецификация доступна по адресу [localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
+
+# Что дополнительно реализовано
+
+* Реализация сервера на стандартной библиотеке без использования фреймворков
+* Логирование ошибок, запросов
+* Контроллеры покрыты тестами на 67%
+* Dockerfile и docker-compose для запуска окружения с работающим приложением и СУБД
+* Доступные пользователи по умолчанию:
+    * login: admin, password: adminadmin, role: ADMIN
+    * login_ user, password: useruser, role: USER
+* Авторизация и аутентификация реализована с помощью JWT токенов
+* REST API для создания и обновления пользователей. Поддержитваются две роли: ADMIN и USER
+* Возможность экспорта Postman-коллекции (файл postman_collection.json)
